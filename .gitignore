@@ -58,5 +58,5 @@ typings/
 .env
 
 #ignore the api
-.config.js
-.configNY.js
+config.js
+configNY.js
