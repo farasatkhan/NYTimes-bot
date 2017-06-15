@@ -50,13 +50,13 @@ Example:
 ```
 These are the option which are available to you.
 
-	Read 			-if you want to read news. 
+	Read 		-if you want to read news. 
 
 	World news  	-to get news about the world. 
 
 	Politics news 	-to get news about politics. 
 
-	Tech news 		-to read about the tech.
+	Tech news 	-to read about the tech.
 
 	NewYork news 	-to read news about newyork.
 
@@ -74,9 +74,9 @@ These are the option which are available to you.
 
 	Health news 	-to get update about health news.
 
-	Follow 			-to get news everyday. 
+	Follow 		-to get news everyday. 
 
-	Unfollow 		-to stop getting updates from us."
+	Unfollow 	-to stop getting updates from us."
 ```
 
 Authors:
