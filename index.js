@@ -181,9 +181,9 @@ function Streaming(){
 	 			Read Magazine- to read a magazine \n \
 	 			Science news- to read news about Science \n \
 	 			Sports news- to get latest update sports\n \
-	 			fashion news- to stay uptodate with the fashion world\n \
+	 			Fashion news- to stay uptodate with the fashion world\n \
 	 			National news- to read national news\n \
-	 			health news- to get update about health news";
+	 			Health news- to get update about health news";
 
 	 	// When someone say Hello or Hi --Give instructions to the user
 	 	if(msg == 'hello' || msg == 'hi'){
@@ -227,7 +227,7 @@ function Streaming(){
 			var txt = technology[random][0]+ " "+ technology[random][1];
 			Post(txt);
 		}
-		if(msg == 'NewYork news' || msg == 'nyregion news' || msg == 'NewYork' || msg== 'nyregion'){
+		if(msg == 'newyork news' || msg == 'nyregion news' || msg == 'newyork' || msg== 'nyregion'){
 			var txt = nyregion[random][0]+ " "+ nyregion[random][1];
 			Post(txt);
 		}
