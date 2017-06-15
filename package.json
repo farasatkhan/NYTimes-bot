@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "twit": "^2.2.5"
+    "twit": "^2.2.5",
+    "dotenv": "^4.0.0"
   }
 }

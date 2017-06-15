@@ -56,7 +56,3 @@ typings/
 
 # dotenv environment variables file
 .env
-
-#ignore the api
-config.js
-configNY.js
