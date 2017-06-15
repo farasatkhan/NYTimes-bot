@@ -172,18 +172,21 @@ function Streaming(){
 	 	var txt = item[random][0]+ " "+ item[random][1];
 	 	var hello = "Hi @"+screenName +", Welcome to our services. These are the option which are available to you. \n \n \
 	 			Reply us with one of the following statement.\n \
-	 			Read - if you want to read news \n \
-	 			World news- to get news about the world \n \
-	 			Politics news- to get news about politics \n \
-	 			Tech news- to read about the tech \n \
-	 			NewYork news- to read news about newyork\n \
-	 			Business news- to get latest update about the business world \n \
-	 			Read Magazine- to read a magazine \n \
-	 			Science news- to read news about Science \n \
-	 			Sports news- to get latest update sports\n \
-	 			Fashion news- to stay uptodate with the fashion world\n \
-	 			National news- to read national news\n \
-	 			Health news- to get update about health news";
+	 			Read -if you want to read news \n \
+	 			World news -to get news about the world \n \
+	 			Politics news -to get news about politics \n \
+	 			Tech news -to read about the tech \n \
+	 			NewYork news -to read news about newyork\n \
+	 			Business news -to get latest update about the business world \n \
+	 			Read Magazine -to read a magazine \n \
+	 			Science news -to read news about Science \n \
+	 			Sports news -to get latest update sports\n \
+	 			Fashion news -to stay uptodate with the fashion world\n \
+	 			National news -to read national news\n \
+	 			Health news -to get update about health news\n \
+	 			----------------------------------------\n\
+	 			Follow -to get news everyday \n \
+	 			Unfollow -to stop getting updates from us";
 
 	 	// When someone say Hello or Hi --Give instructions to the user
 	 	if(msg == 'hello' || msg == 'hi'){
