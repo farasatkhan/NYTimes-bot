@@ -123,6 +123,7 @@ function nyTimes(cate){
 				}
 				console.log("Bootup!");
 				console.log(item.length);
+				console.log("Category: "+cate);
 			}
 		}catch(e){
 			console.log("Error at:"+ cate);	
@@ -141,7 +142,7 @@ var x = setInterval(function(){
 	if(z == (category.length - 1)){
 
 		setTimeout(function(){
-			// Streaming();
+			Streaming();
 		},5000);
 
 		clearInterval(x);
