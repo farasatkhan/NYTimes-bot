@@ -2,6 +2,8 @@ var request = require('request');
 var twit = require('twit');
 require('dotenv').config();
 
+var admin = require("firebase-admin");
+
 // Configuration of Twitter
 var T = new twit({
 	consumer_key:         process.env.CONSUMER_KEY,
@@ -14,11 +16,35 @@ var T = new twit({
 var user_ID = [];
 var user_screenName = [];
 var totalResults = 0;
+var maxResult = 0;
 
 // Categories in NYTimes
 var category = [	'home','opinion','world','national','politics','upshot','nyregion','business','technology',
 					'science','health','sports','arts','books','movies','theater','sundayreview','fashion','tmagazine',
 					'food','travel','magazine','realestate','automobiles','obituaries','insider'];
+
+var serviceAccount= {
+  "type": process.env.SERVICE_ACCOUNT,
+  "project_id": process.env.DATABASE,
+  "private_key_id": process.env.PRIVATE_KEY_ID,
+  "private_key": "-----BEGIN PRIVATE KEY-----\n"+process.env.PRIVATE_KEY+ "\nIWBQjuVkN1meR9WPIfxAQigFd1VwsSbWvougZfAFA9HdkrkEJop+4m87cIf/gF9g\n2jlstjKKZHz7lKcrEJcU9am3VXAywzIovDRHob/zaYgdMM9jasfUnwd4KO5f9YLP\n3t3nLpvnxtNEilJuHSWrG0ZSqbpPHfk6SIc/1ks914X4F37kKMQjBaeFltuujpj9\n5sF86WPvniwitEpHqrChVRs4rA46ZJ5FCYJfPYKdW5RtiTb5i3hA/5XM7anIj7Ut\nwqp2rNXkgNQcEO5Omk9cGie0YWT27eO27LzqJvEZopOnCUT58ljM1Xeceh6KY4EB\ndaQ8LUYdAgMBAAECggEACEvoD92d5Ta3FiXrVp36AyrIak3iMtBw/UGqhgetVYKa\nQQ0DHuTmlv1NPR99zOCWLoUKYrSAMkEK7c0+Mqa6TGzSt7zUHphkFmlSny7t/ErJ\nSnk41wo645zmcbZSKjJ/yVf0WqBmQgihzFjTPM5BjRwe4fHqAMcQEmm2ThucQlq5\nVVnX+qy5hnLbw4Xnk3hu9c+ozNCWgQQES4rYKhNgdfhTiGkb13mUnRwJSwL/PN4T\nt+h7yGtl7bXWTLyHJBGGiIOnfNGqHGZUTxCmaXYwAH5ncfh1XOdGWdE4A0106b03\nfbNlMm1gAVepRs0iDYXKSZTgcMXT0PcwPgN3SrHzgQKBgQDxistKJel9i9qbVuMT\n3tT6bLSfF5X3ZoG5utiz2Ee3uhElLeZNnA1/EBa4XlI7uuc2W8wg5cGh5TyGDnMG\naR45oUFuwZD4QzHFTxMeP4+fV8rDaSc1aMcTPFk1kpCL4RVd0Kq8vgQ4Pn8tWaGV\n1sSXZB8xbagWakI2t730ax0dgQKBgQDruA6m8G/VFex0Q0ItdkKzWzPicoSWutCa\nTSvgDGYjjAp5dm0ML3vHz/OoFxS2APZQzAeQWCPAJEoXtZ/0PRvzGD/J2f/l2Fvz\nppAwL53bt6CvCjPMfmfMM3wqmNOgY2Y0Eu4pV/onBMwONymoACRgloiQaNs8vWkG\nGQ5U/IUunQKBgGNCmlAaTF2ff3KeviqIRBW1XnSSiLpmkaD1u+AMXUyPVkRlHGOA\nYbt5rRyPBlQtdp7MEpLiWDRjs/+TKInV4Onl7rHJMf4T/vwKhtzDWg4tUdIEAGze\nZhDtl+uAE46oLNOk0MVHgQxsAm9sig69d4SPTJJPcefkOtmpoJI1An4BAoGAWRr8\nvvKI894TwmdibtkTocVKOcHciTYZgRrHCSzmt21K0FuKIV8ZxZDApLwE4kA+3JAk\nE9advRZ6w7euvZ8UH7L8+grkhzhgmhxOyUhWviYOId0Tc6wdBL45o8idxzWL/wdg\n7FQLhhB0KrODlbRoC/MbsKtSpQVc3CdAmbPTjKkCgYEA2iEk/GDiqCtVukY5Xrzp\nv38EsK0AH/ql2LEDo3Td2vhxy3Cw6s3s6Hgfbn/VxtncppsKcRzULY2vHPgWdJcV\nKllUKOZArcH/4zrUlyGbiLEjQojQN4d5DvftQGmE2FR8W75KrkI1HeGRFTmE9ubI\nK820TM5XWaQs6eEZ4CM0DPE=\n-----END PRIVATE KEY-----\n",
+  "client_email": process.env.CLIENT_EMAIL,
+  "client_id": process.env.CLIENT_ID,
+  "auth_uri": process.env.AUTH_URL,
+  "token_uri": process.env.TOKEN_URL,
+  "auth_provider_x509_cert_url": process.env.AUTH_PROVIDER,
+  "client_x509_cert_url": process.env.CLIENT_CERT_URL
+}
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: process.env.DATABASE_URL
+});
+
+
+var db = admin.database();
+var ref = db.ref("follow");
+
 
 // List to store the title and url
 var item = [];
@@ -33,84 +59,74 @@ var health = [];
 var sports = [];
 var fashion = [];
 var magazine = [];
+var error = [];
 
 // Calling NyTimesApi
 function nyTimes(cate){
 	var api ="https://api.nytimes.com/svc/topstories/v2/"+cate+".json?api-key=" + process.env.NY_APIKEY;
+	
 	request.get(api, response);
 
 	function response(err, response, body) {
-		body = JSON.parse(body);
-		
-		status_verify = body.status;
-		copyright = body.copyright;
-		totalResults = body.num_results;
+		try{
 
-		if (status_verify == "OK"){
+			body = JSON.parse(body);
+			status_verify = body.status;
+			copyright = body.copyright;
+			totalResults = body.num_results;
+			maxResult += totalResults;
 
-			for(var i = 0; i < totalResults; i++){
-				var title = body.results[i].title;
-				var url = body.results[i].short_url;
+			if (status_verify == "OK"){
 
-				item.push([title, url])
+				for(var i = 0; i < totalResults; i++){
+					var title = body.results[i].title;
+					var url = body.results[i].short_url;
 
-				switch(cate){
-					case 'world':
-						world.push([title,url]);
-						break;
-					case 'politics':
-						politics.push([title, url]);
-						break;
-					case 'nyregion':
-						nyregion.push([title, url]);
-						break;
-					case 'technology':
-						technology.push([title, url]);
-						break;
-					case 'business':
-						business.push([title,url]);
-						break;
-					case 'science':
-						science.push([title, url]);
-						break;
-					case 'health':
-						health.push([title, url]);
-						break;
-					case 'fashion':
-						fashion.push([title, url]);
-						break;
-					case 'magazine':
-						magazine.push([title, url]);
-						break;
-					case 'national':
-						national.push([title,url]);
-						break;
-					case 'sports':
-						sports.push([title, url]);
-						break;
+					item.push([title, url])
 
-				}
-			}
-			console.log("Bootup!");
-			console.log(item.length);
+					switch(cate){
+						case 'world':
+							world.push([title,url]);
+							break;
+						case 'politics':
+							politics.push([title, url]);
+							break;
+						case 'nyregion':
+							nyregion.push([title, url]);
+							break;
+						case 'technology':
+							technology.push([title, url]);
+							break;
+						case 'business':
+							business.push([title,url]);
+							break;
+						case 'science':
+							science.push([title, url]);
+							break;
+						case 'health':
+							health.push([title, url]);
+							break;
+						case 'fashion':
+							fashion.push([title, url]);
+							break;
+						case 'magazine':
+							magazine.push([title, url]);
+							break;
+						case 'national':
+							national.push([title,url]);
+							break;
+						case 'sports':
+							sports.push([title, url]);
+							break;
 
-			if(err){
-				item = [];
-				var z = 0;
-
-				var x = setInterval(function(){
-					if(z == (category.length - 1)){
-
-						setTimeout(function(){
-							Streaming();
-						},5000);
-
-						clearInterval(x);
 					}
-					nyTimes(category[z]);
-					z++;
-				},1500);
+				}
+				console.log("Bootup!");
+				console.log(item.length);
 			}
+		}catch(e){
+			console.log("Error at:"+ cate);	
+			error.push(cate);
 		}
 	}
 }
@@ -125,7 +141,7 @@ var x = setInterval(function(){
 	if(z == (category.length - 1)){
 
 		setTimeout(function(){
-			Streaming();
+			// Streaming();
 		},5000);
 
 		clearInterval(x);
@@ -137,6 +153,19 @@ var x = setInterval(function(){
 // Running every 3 hours and 55 min - Getting new data
 setInterval(function(){
 	var z = 0;
+	item = [];
+	politics = [];
+	world = [];
+	national = [];
+	nyregion = [];
+	business = [];
+	technology = [];
+	science = [];
+	health = [];
+	sports = [];
+	fashion = [];
+	magazine = [];
+	error = [];
 
 	var x = setInterval(function(){
 		if(z == (category.length - 1)){
@@ -150,7 +179,7 @@ setInterval(function(){
 		nyTimes(category[z]);
 		z++;
 	},1500);
-},1000*60*55*3);
+},1000*60*3);
 
 
 // Getting direct messages
@@ -159,14 +188,15 @@ function Streaming(){
 	console.log("Streaming started");
 
 	stream.on('direct_message', function(event){	
-
 		var msg = event.direct_message.text;
 	 	var screenName = event.direct_message.sender.screen_name;
 	 	var userID = event.direct_message.sender.id_str;
 	 	var msgID = event.direct_message.id_str;
 
 	 	var msg = msg.toLowerCase();
-	 	var random = Math.floor(Math.random() * totalResults)
+	 	var random = Math.floor(Math.random() * maxResult);
+
+	 	console.log("received message from "+ screenName + " with id: "+ userID+" and his message is: "+msg);
 
 	 	// Getting a random title and url from the item list
 	 	var txt = item[random][0]+ " "+ item[random][1];
@@ -176,7 +206,7 @@ function Streaming(){
 	 			World news -to get news about the world. \n \
 	 			Politics news -to get news about politics. \n \
 	 			Tech news -to read about the tech .\n \
-	 			NewYork news -to read news about newyork.\n \
+	 			New York news -to read news about newyork.\n \
 	 			Business news -to get news about business.\n \
 	 			Read Magazine -to read a magazine. \n \
 	 			Science news -to read news about Science. \n \
@@ -217,48 +247,49 @@ function Streaming(){
 				}
 			})
 		}
+
 		// when user say one of the given below then sent related news
-		if(msg == 'world news' || msg == 'world'){
+		if(msg == 'world news' || msg == 'world' && error.indexOf('world') > -1){
 			var txt = world[random][0]+ " "+ world[random][1];
 			Post(txt);
 		}
-		if(msg == 'politics news' || msg == 'politics'){
+		if(msg == 'politics news' || msg == 'politics' && error.indexOf('politics') > -1){
 			var txt = politics[random][0]+ " "+ politics[random][1];
 			Post(txt);	
 		}
-		if(msg == 'tech news' || msg == 'tech' || msg== 'technology'){
+		if(msg == 'tech news' || msg == 'tech' || msg== 'technology' && error.indexOf('technology') > -1){
 			var txt = technology[random][0]+ " "+ technology[random][1];
 			Post(txt);
 		}
-		if(msg == 'newyork news' || msg == 'nyregion news' || msg == 'newyork' || msg== 'nyregion'){
+		if(msg == 'new york news' || msg == 'nyregion news' || msg == 'new york' || msg== 'nyregion' && error.indexOf('nyregion') > -1){
 			var txt = nyregion[random][0]+ " "+ nyregion[random][1];
 			Post(txt);
 		}
-		if(msg == 'business news' || msg == 'business'){
+		if(msg == 'business news' || msg == 'business' && error.indexOf('business') > -1){
 			var txt = business[random][0]+ " "+ business[random][1];
 			Post(txt);
 		}
-		if(msg == 'read magazine' || msg == 'magazine'){
+		if(msg == 'read magazine' || msg == 'magazine' && error.indexOf('magazine') > -1){
 			var txt = magazine[random][0]+ " "+ magazine[random][1];
 			Post(txt);
 		}
-		if(msg == 'science news' || msg == 'science'){
+		if(msg == 'science news' || msg == 'science' && error.indexOf('science') > -1){
 			var txt = science[random][0]+ " "+ science[random][1];
 			Post(txt);
 		}
-		if(msg == 'fashion news' || msg == 'fashion'){
+		if(msg == 'fashion news' || msg == 'fashion' && error.indexOf('fashion') > -1){
 			var txt = fashion[random][0]+ " "+ fashion[random][1];
 			Post(txt);
 		}
-		if(msg == 'sports news' || msg == 'sport news' || msg == 'sports' || msg == 'sport'){
+		if(msg == 'sports news' || msg == 'sport news' || msg == 'sports' || msg == 'sport' && error.indexOf('sports') > -1){
 			var txt = sports[random][0]+ " "+ sports[random][1];
 			Post(txt);
 		}
-		if(msg == 'national news' || msg == 'national'){
+		if(msg == 'national news' || msg == 'national' && error.indexOf('national') > -1){
 			var txt = national[random][0]+ " "+ national[random][1];
 			Post(txt);
 		}
-		if(msg == 'health news' || msg == 'health'){
+		if(msg == 'health news' || msg == 'health' && error.indexOf('health') > -1){
 			var txt = health[random][0]+ " "+ health[random][1];
 			Post(txt);
 		}
@@ -266,35 +297,46 @@ function Streaming(){
 
 		// When someone say follow --add to the list
 		if(msg == 'follow'){
+				ref.orderByChild("name").equalTo("farasatkahan").once("value", function(snapshot) {
+				    var userData = snapshot.val();
+				    var screenName = event.direct_message.sender.screen_name;
+	 				var userID = event.direct_message.sender.id_str;
 
-			if(user_ID.indexOf(userID) == -1 && user_screenName.indexOf(screenName) == -1){
+				    if (!userData){
+				      	var data = {
+				      		name: screenName,
+					  		user_id: userID
+						}
 
-				user_ID.push(userID);
-				user_screenName.push(screenName);
-
-				Post("Thanks for following us. You will receive articles from us everyday.");
-			}else if(user_ID.indexOf(userID) > -1 && user_screenName.indexOf(screenName) > -1){
-
-				Post("You are already following us.");
-			}
-
+						if(ref.push(data)){
+						Post("Thanks for following us. You will receive articles from us everyday.");
+						}
+				    }else{
+				    	Post("You are already following us or there might be a problem.");
+				    }
+				});
 		}
 		// When someone say unfollow --remove from the list
 		if(msg == 'unfollow'){
-			var id = user_ID.indexOf(userID);
-			var screen = user_screenName.indexOf(screenName);
+			var screenName = event.direct_message.sender.screen_name;
+	 		var userID = event.direct_message.sender.id_str;
 
-			if( id > -1 && screen > -1){
-				
-				user_ID.splice(id);
-				user_screenName.splice(screen);
+			ref.orderByChild("user_id").equalTo(userID).once("value", function(snapshot) {
+			    var userData = snapshot.val();
+			    var key = snapshot.key;
 
-				Post("Sorry for inconvenience, You are unfollowed from our services.");
+		    
+			    if (userData){
 
-			}else if(id == -1 && screen == -1){
+			      var k = Object.keys(userData);
+			      ref.child(k[0]).remove();
 
-				Post("You are not following us. To follow, reply with 'follow' ");	
-			}
+			      Post("Sorry for inconvenience, You are unfollowed from our services.");
+
+			    }else{
+			      Post("You are not following us. To follow, reply with 'follow' ");	
+			    }
+			});
 
 		}
 
@@ -312,13 +354,36 @@ function Streaming(){
 
 // For our follow users -- senting news
 function follow(){
-	var rand = Math.floor(Math.random() * totalResults)
+	var rand = Math.floor(Math.random() * maxResult)
 	var val = item[rand][0] + " " +item[rand][1];
 
-	for(var i =0; i< user_ID.length; i++){
+	var saveData = [];
+
+	ref.on("value", gotData, errData);
+
+	function gotData(data){
+	  // console.log(data.val());
+	  var data = data.val();
+	  var keys = Object.keys(data);
+	  // console.log(keys);
+
+	  for(var i=0;i<keys.length; i++){
+	    var k= keys[i];
+	    var name = data[k].name;
+	    var user_id = data[k].user_id;
+
+	    saveData.push([user_id, name]);
+	  }}
+
+
+	function errData(err){
+	  console.log("Error");
+	  console.log(err);}
+
+	for(var i =0; i< saveData.length; i++){
 		var params = {
-			user_id: user_ID[i],
-			screen_name: user_screenName[i],
+			user_id: saveData[i][0],
+			screen_name: saveData[i][1],
 			text: val,
 		}
 		T.post('direct_messages/new',params, function(err, data, response){
@@ -327,7 +392,7 @@ function follow(){
 			}
 		})
 
-		wait(1000 * 33)
+		wait(1000 * 12);
 	}
 }
 
@@ -385,4 +450,4 @@ function find_User(){
 setInterval(function(){
 	follow();
 	find_User();
-},1000*60*60*3)
+},1000*60*60*21)
