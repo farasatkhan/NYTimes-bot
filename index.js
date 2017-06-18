@@ -1,8 +1,8 @@
 var request = require('request');
 var twit = require('twit');
 require('dotenv').config();
-var serviceAccount = require('./followers.js');
 var admin = require("firebase-admin");
+var serviceAccount= require('./config.js');
 
 
 // Double streaming after second call from app
@@ -168,7 +168,7 @@ setInterval(function(){
 		nyTimes(category[z]);
 		z++;
 	},1500);
-},1000*60*3);
+},1000*60*60*3);
 
 
 // Getting direct messages
@@ -312,7 +312,7 @@ function Streaming(){
 						Post("Thanks for following us. You will receive articles from us everyday.");
 						}
 				    }else{
-				    	Post("You are already following us or there might be a problem.");
+				    	Post("You are already following us.");
 				    }
 				});
 		}
