@@ -4,6 +4,9 @@ require('dotenv').config();
 
 var admin = require("firebase-admin");
 
+
+// Double streaming after second call from app
+
 // Configuration of Twitter
 var T = new twit({
 	consumer_key:         process.env.CONSUMER_KEY,
@@ -123,7 +126,6 @@ function nyTimes(cate){
 				}
 				console.log("Bootup!");
 				console.log(item.length);
-				console.log("Category: "+cate);
 			}
 		}catch(e){
 			console.log("Error at:"+ cate);	
@@ -197,8 +199,6 @@ function Streaming(){
 	 	var msg = msg.toLowerCase();
 	 	var random = Math.floor(Math.random() * maxResult);
 
-	 	console.log("received message from "+ screenName + " with id: "+ userID+" and his message is: "+msg);
-
 	 	// Getting a random title and url from the item list
 	 	var txt = item[random][0]+ " "+ item[random][1];
 	 	var hello = "Hi @"+screenName +", Welcome to our services. These are the option which are available to you. \n \n \
@@ -230,6 +230,8 @@ function Streaming(){
 				if(!err){
 					console.log("Sent "+ screenName);
 					console.log(item.length);
+				}else{
+					console.log("Error at hello: "+ err);
 				}
 			}) 		
 	 	}
@@ -251,47 +253,58 @@ function Streaming(){
 
 		// when user say one of the given below then sent related news
 		if(msg == 'world news' || msg == 'world' && error.indexOf('world') > -1){
-			var txt = world[random][0]+ " "+ world[random][1];
+			var rand = Math.floor(Math.random() * world.length);
+			var txt = world[rand][0]+ " "+ world[rand][1];
 			Post(txt);
 		}
 		if(msg == 'politics news' || msg == 'politics' && error.indexOf('politics') > -1){
-			var txt = politics[random][0]+ " "+ politics[random][1];
+			var rand = Math.floor(Math.random() * politics.length);
+			var txt = politics[rand][0]+ " "+ politics[rand][1];
 			Post(txt);	
 		}
 		if(msg == 'tech news' || msg == 'tech' || msg== 'technology' && error.indexOf('technology') > -1){
-			var txt = technology[random][0]+ " "+ technology[random][1];
+			var rand = Math.floor(Math.random() * technology.length);
+			var txt = technology[rand][0]+ " "+ technology[rand][1];
 			Post(txt);
 		}
 		if(msg == 'new york news' || msg == 'nyregion news' || msg == 'new york' || msg== 'nyregion' && error.indexOf('nyregion') > -1){
-			var txt = nyregion[random][0]+ " "+ nyregion[random][1];
+			var rand = Math.floor(Math.random() * nyregion.length);
+			var txt = nyregion[rand][0]+ " "+ nyregion[rand][1];
 			Post(txt);
 		}
 		if(msg == 'business news' || msg == 'business' && error.indexOf('business') > -1){
-			var txt = business[random][0]+ " "+ business[random][1];
+			var rand = Math.floor(Math.random() * business.length);
+			var txt = business[rand][0]+ " "+ business[rand][1];
 			Post(txt);
 		}
 		if(msg == 'read magazine' || msg == 'magazine' && error.indexOf('magazine') > -1){
-			var txt = magazine[random][0]+ " "+ magazine[random][1];
+			var rand = Math.floor(Math.random() * magazine.length);
+			var txt = magazine[rand][0]+ " "+ magazine[rand][1];
 			Post(txt);
 		}
 		if(msg == 'science news' || msg == 'science' && error.indexOf('science') > -1){
-			var txt = science[random][0]+ " "+ science[random][1];
+			var rand = Math.floor(Math.random() * science.length);
+			var txt = science[rand][0]+ " "+ science[rand][1];
 			Post(txt);
 		}
 		if(msg == 'fashion news' || msg == 'fashion' && error.indexOf('fashion') > -1){
-			var txt = fashion[random][0]+ " "+ fashion[random][1];
+			var rand = Math.floor(Math.random() * fashion.length);
+			var txt = fashion[rand][0]+ " "+ fashion[rand][1];
 			Post(txt);
 		}
 		if(msg == 'sports news' || msg == 'sport news' || msg == 'sports' || msg == 'sport' && error.indexOf('sports') > -1){
-			var txt = sports[random][0]+ " "+ sports[random][1];
+			var rand = Math.floor(Math.random() * sports.length);
+			var txt = sports[rand][0]+ " "+ sports[rand][1];
 			Post(txt);
 		}
 		if(msg == 'national news' || msg == 'national' && error.indexOf('national') > -1){
-			var txt = national[random][0]+ " "+ national[random][1];
+			var rand = Math.floor(Math.random() * national.length);
+			var txt = national[rand][0]+ " "+ national[rand][1];
 			Post(txt);
 		}
 		if(msg == 'health news' || msg == 'health' && error.indexOf('health') > -1){
-			var txt = health[random][0]+ " "+ health[random][1];
+			var rand = Math.floor(Math.random() * health.length);
+			var txt = health[rand][0]+ " "+ health[rand][1];
 			Post(txt);
 		}
 
@@ -451,4 +464,4 @@ function find_User(){
 setInterval(function(){
 	follow();
 	find_User();
-},1000*60*60*21)
+},1000*60*60*21);
