@@ -1,7 +1,7 @@
 var request = require('request');
 var twit = require('twit');
 require('dotenv').config();
-var serviceAccount = require('./config.js');
+var serviceAccount = require('./followers.js');
 var admin = require("firebase-admin");
 
 
