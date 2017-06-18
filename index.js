@@ -28,7 +28,7 @@ var category = [	'home','opinion','world','national','politics','upshot','nyregi
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: process.env.DATABASE_URL
+  databaseURL: "https://followers-79dfe.firebaseio.com"
 });
 
 var db = admin.database();
