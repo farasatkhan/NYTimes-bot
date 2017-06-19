@@ -5,7 +5,7 @@ module.exports = {
   "type": "service_account",
   "project_id": "followers-79dfe",
   "private_key_id": process.env.PRIVATE_KEY_ID,
-  "private_key": process.env.PRIVATE_KEY,
+  "private_key": process.env.USER_PRIVATE_KEY,
   "client_email": "follower@followers-79dfe.iam.gserviceaccount.com",
   "client_id": "102670496840962291791",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
