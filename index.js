@@ -5,8 +5,6 @@ var admin = require("firebase-admin");
 var serviceAccount= require('./config.js');
 
 
-// Double streaming after second call from app
-
 // Configuration of Twitter
 var T = new twit({
 	consumer_key:         process.env.CONSUMER_KEY,
@@ -28,7 +26,7 @@ var category = [	'home','opinion','world','national','politics','upshot','nyregi
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: ""
+  databaseURL: "https://followers-79dfe.firebaseio.com"
 });
 
 var db = admin.database();
@@ -406,14 +404,6 @@ function follow(){
 	}
 }
 
-
-function wait(ms){
-   var start = new Date().getTime();
-   var end = start;
-   while(end < start + ms) {
-     end = new Date().getTime();
-  }
-}
 
 // Looking for new users
 function find_User(){

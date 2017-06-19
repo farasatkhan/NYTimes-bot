@@ -1,4 +1,4 @@
-module.exports = {
+{
   "type": "service_account",
   "project_id": "followers-79dfe",
   "private_key_id": "084e5a00ad281940d6cf3dba36bc1e31de27ea33",
