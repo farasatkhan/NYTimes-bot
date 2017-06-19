@@ -46,7 +46,7 @@ Usage:
 ```
 
 - After completing all the above step. You would need to create a Firebase account to store users username and their id so you could later send them articles.
-- After generating a service account. Download in the JSON format and save it in config.js file.
+- After generating a service account which you could find in [IAM & Admin section](https://console.cloud.google.com/iam-admin/serviceaccounts/). Download in the JSON format and save it in config.js file.
 
 ```
 module.exports = {
