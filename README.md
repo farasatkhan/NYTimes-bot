@@ -1,4 +1,4 @@
-# NYTimesRobot
+# NYTimesRobot (@nytimesRobot)[https://twitter.com/nytimesRobot]
 
 
 Introduction:
