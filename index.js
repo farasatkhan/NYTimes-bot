@@ -50,6 +50,7 @@ var fashion = [];
 var magazine = [];
 var error = [];
 
+<<<<<<< HEAD
 function wait(ms){
    var start = new Date().getTime();
    var end = start;
@@ -58,6 +59,8 @@ function wait(ms){
   }
 }
 
+=======
+>>>>>>> 0f59e60baff04adcae82809046d796f5783f0fd8
 // Calling NyTimesApi
 function nyTimes(cate){
 	var api ="https://api.nytimes.com/svc/topstories/v2/"+cate+".json?api-key=" + process.env.NY_APIKEY;
@@ -213,9 +216,12 @@ function Streaming(){
 	 			Follow -to get news everyday. \n \
 	 			Unfollow -to stop getting updates from us.";
 
+<<<<<<< HEAD
 	 	wait(1000*4);
 
 
+=======
+>>>>>>> 0f59e60baff04adcae82809046d796f5783f0fd8
 	 	// When someone say Hello or Hi --Give instructions to the user
 	 	if(msg == 'hello' || msg == 'hi'){
 	 		var params = {
@@ -407,6 +413,18 @@ function follow(){
 	}
 }
 
+<<<<<<< HEAD
+=======
+
+function wait(ms){
+   var start = new Date().getTime();
+   var end = start;
+   while(end < start + ms) {
+     end = new Date().getTime();
+  }
+}
+
+>>>>>>> 0f59e60baff04adcae82809046d796f5783f0fd8
 // Looking for new users
 function find_User(){
 	var today = new Date();
