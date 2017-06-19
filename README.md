@@ -1,9 +1,9 @@
-# NYTimesRobot [@nytimesRobot](https://twitter.com/nytimesRobot)
+# NYTimesRobot
 
 
 Introduction:
 --------------
-Read Top stories from The New York Times and much more. Reading news articles from twitter is just one message away.<br />
+Read Top stories from The New York Times and much more. Reading news articles from twitter is just one message away. [@nytimesRobot](https://twitter.com/nytimesRobot) is based on this repository<br />
 
 Installation:
 ------------------
@@ -45,6 +45,31 @@ Usage:
 	heroku config:set ACCESS_TOKEN_SECRET = YourAccessTokenSecret
 ```
 
+- After completing all the above step. You would need to create a Firebase account to store users username and their id so you could later send them articles.
+- After generating a service account. Download in the JSON format and save it in config.js file.
+
+```
+module.exports = {
+  "type": "",
+  "project_id": "",
+  "private_key_id": "",
+  "private_key": "",
+  "client_email": "",
+  "client_id": "",
+  "auth_uri": "",
+  "token_uri": "",
+  "auth_provider_x509_cert_url": "",
+  "client_x509_cert_url":""
+}
+```
+- Open index.js and look for the code given below and add your database url in databaseURL.
+
+```
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: ""
+});
+```
 Example:
 ------------------
 ```
