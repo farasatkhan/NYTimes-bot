@@ -144,11 +144,12 @@ var x = setInterval(function(){
 	}
 	nyTimes(category[z]);
 	z++;
-},1500);
+},2000);
 
 // Running every 3 hours and 55 min - Getting new data
 setInterval(function(){
 	var z = 0;
+	maxResult = 0;
 	item = [];
 	politics = [];
 	world = [];
@@ -164,6 +165,7 @@ setInterval(function(){
 	error = [];
 
 	var x = setInterval(function(){
+		
 		if(z == (category.length - 1)){
 
 			setTimeout(function(){
@@ -174,7 +176,7 @@ setInterval(function(){
 		}
 		nyTimes(category[z]);
 		z++;
-	},1500);
+	},2000);
 },1000*60*60*3);
 
 
