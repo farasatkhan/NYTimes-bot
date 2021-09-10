@@ -3,7 +3,7 @@
 
 Introduction:
 --------------
-Read Top stories from The New York Times [@nytimesRobot](https://twitter.com/nytimesRobot) is based on this repository<br />
+Read Top stories from The New York Times<br />
 
 Installation:
 ------------------
